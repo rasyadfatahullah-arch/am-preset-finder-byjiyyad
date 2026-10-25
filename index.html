@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AM Preset Finder - by Jiyyad Tools</title>
+<meta name="description" content="AM Preset Finder: ambil preset Alight Motion dari link video dengan cepat. By Jiyyad Tools.">
+<meta name="theme-color" content="#1b1038">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#1b1038; --bg2:#3a1a6b; --bg3:#7b2cbf;
+  --pink:#ff7eb6; --pink2:#ffb3d9; --cyan:#7df9ff; --gold:#ffe29a;
+  --glass:rgba(255,255,255,.09); --glass-b:rgba(255,255,255,.22);
+  --text:#fff4fb; --muted:#d8c3f0;
+  --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{
+  font-family:"Zen Maru Gothic","Fredoka",system-ui,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #ff7eb644, transparent 60%),
+    radial-gradient(900px 600px at -10% 20%, #7df9ff22, transparent 60%),
+    linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+#sky{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.moon{
+  position:fixed;top:-60px;right:-40px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fff7d6,#ffe29a 55%,#ffc86b);
+  filter:blur(.3px);opacity:.28;box-shadow:0 0 120px 40px #ffe29a44;z-index:0;
+  animation:float 9s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(14px)}}
+
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:34px 18px 90px}
+
+header{text-align:center;margin-bottom:26px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:999px;font-size:13px;font-weight:700;
+  background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(10px);
+  color:var(--pink2);letter-spacing:.4px;
+}
+.badge i{font-style:normal;animation:spin 6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+h1{
+  font-family:"Fredoka",sans-serif;font-weight:700;
+  font-size:clamp(34px,8vw,56px);line-height:1.05;margin:16px 0 8px;
+  background:linear-gradient(90deg,#fff,var(--pink) 45%,var(--cyan));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 22px #ff7eb655);
+}
+h1 .spark{display:inline-block;animation:tw 2.4s ease-in-out infinite;-webkit-text-fill-color:initial}
+@keyframes tw{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(1.25) rotate(18deg);opacity:.7}}
+.sub{color:var(--muted);font-size:15px}
+.owner{margin-top:10px;font-family:"Fredoka",sans-serif;font-weight:600;font-size:14px;color:var(--gold)}
+
+.card{
+  background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  padding:22px;box-shadow:0 20px 60px #0006, inset 0 1px 0 #ffffff25;
+}
+label{display:block;font-weight:700;font-size:14px;margin-bottom:10px;color:var(--pink2)}
+.field{
+  display:flex;gap:8px;align-items:center;
+  background:#0000003a;border:1.5px solid var(--glass-b);border-radius:16px;padding:6px 6px 6px 14px;
+  transition:border-color .2s, box-shadow .2s;
+}
+.field:focus-within{border-color:var(--pink);box-shadow:0 0 0 4px #ff7eb633}
+.field input{
+  flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);
+  font:500 15px "Fredoka",sans-serif;padding:10px 0;
+}
+.field input::placeholder{color:#d8c3f099}
+.mini{
+  border:0;cursor:pointer;border-radius:12px;padding:9px 12px;font:600 13px "Fredoka",sans-serif;
+  color:var(--text);background:var(--glass);border:1px solid var(--glass-b);transition:.15s;
+}
+.mini:hover{background:#ffffff26}
+.go{
+  width:100%;margin-top:14px;border:0;cursor:pointer;border-radius:16px;padding:15px;
+  font:700 17px "Fredoka",sans-serif;color:#2a0b4a;
+  background:linear-gradient(90deg,var(--pink),var(--gold));
+  box-shadow:0 10px 30px #ff7eb655;transition:transform .15s, filter .15s, box-shadow .15s;
+  position:relative;overflow:hidden;
+}
+.go:hover{transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 14px 36px #ff7eb677}
+.go:active{transform:translateY(0) scale(.99)}
+.go[disabled]{opacity:.7;cursor:wait;transform:none}
+.go::after{
+  content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(100deg,transparent,#ffffff77,transparent);transform:skewX(-20deg);
+  animation:shine 3.2s ease-in-out infinite;
+}
+@keyframes shine{0%{left:-60%}60%,100%{left:130%}}
+.hint{margin-top:12px;font-size:12.5px;color:var(--muted);text-align:center}
+
+#status{margin-top:18px}
+.loader{display:none;text-align:center;padding:26px 0 6px}
+.loader.on{display:block}
+.dots{display:inline-flex;gap:8px}
+.dots span{width:12px;height:12px;border-radius:50%;background:var(--pink);animation:bounce 1s infinite}
+.dots span:nth-child(2){background:var(--gold);animation-delay:.15s}
+.dots span:nth-child(3){background:var(--cyan);animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0) scale(.8)}40%{transform:translateY(-12px) scale(1.1)}}
+.loader p{margin-top:10px;color:var(--muted);font-size:14px}
+
+.err{
+  display:none;margin-top:16px;padding:14px 16px;border-radius:16px;font-size:14px;line-height:1.5;
+  background:#ff4d6d22;border:1px solid #ff4d6d77;color:#ffd0da;
+}
+.err.on{display:block}
+
+#result{display:none;margin-top:18px;animation:pop .45s cubic-bezier(.2,1.3,.4,1)}
+#result.on{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.res-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.res-head h2{font-family:"Fredoka",sans-serif;font-size:19px;color:var(--cyan)}
+.row{
+  background:#0000003a;border:1px solid var(--glass-b);border-radius:16px;padding:12px 14px;margin-bottom:10px;
+}
+.row .k{font-size:12px;font-weight:700;color:var(--pink2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.row .v{font:500 14.5px/1.5 "Fredoka",sans-serif;word-break:break-word;white-space:pre-wrap}
+.row .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.row img{display:block;max-width:100%;max-height:340px;border-radius:14px;margin-top:4px}
+.row video{display:block;max-width:100%;max-height:360px;border-radius:14px;margin-top:4px}
+a.mini{text-decoration:none;display:inline-block}
+.raw{display:none;margin-top:6px}
+.raw.on{display:block}
+.raw pre{
+  background:#00000066;border-radius:14px;padding:14px;overflow:auto;max-height:320px;
+  font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#c8ffe9;
+}
+
+.how{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.how div{
+  text-align:center;padding:14px 8px;border-radius:18px;background:var(--glass);
+  border:1px solid var(--glass-b);font-size:13px;color:var(--muted);
+}
+.how b{display:block;font-size:22px;margin-bottom:4px}
+@media(max-width:520px){.how{grid-template-columns:1fr}.field{flex-wrap:wrap;padding:10px}.field input{flex-basis:100%}}
+
+footer{text-align:center;margin-top:30px;font-size:13px;color:var(--muted)}
+footer b{color:var(--pink2)}
+
+/* floating channel button */
+.fab{
+  position:fixed;right:16px;bottom:16px;z-index:5;border:0;cursor:pointer;
+  padding:12px 16px;border-radius:999px;font:700 14px "Fredoka",sans-serif;color:#0b2a1c;
+  background:linear-gradient(90deg,#7dffb2,#7df9ff);box-shadow:0 10px 30px #7dffb255;
+  animation:float 4s ease-in-out infinite;
+}
+
+/* popup */
+.overlay{
+  position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:18px;
+  background:rgba(10,4,26,.66);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.overlay.on{display:flex;animation:fade .25s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{
+  position:relative;width:100%;max-width:400px;text-align:center;padding:30px 22px 24px;border-radius:28px;
+  background:linear-gradient(160deg,#2d1760ee,#5b1f93ee);border:1.5px solid var(--glass-b);
+  box-shadow:0 30px 80px #000a, 0 0 60px #ff7eb633;animation:pop .5s cubic-bezier(.2,1.3,.4,1);
+}
+.modal .ico{
+  width:74px;height:74px;margin:-62px auto 12px;border-radius:50%;display:grid;place-items:center;font-size:36px;
+  background:linear-gradient(135deg,#7dffb2,#7df9ff);box-shadow:0 10px 30px #7dffb277;animation:float 3s ease-in-out infinite;
+}
+.modal h3{font-family:"Fredoka",sans-serif;font-size:24px;margin-bottom:8px;
+  background:linear-gradient(90deg,#fff,var(--pink2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.modal p{color:var(--muted);font-size:15px;line-height:1.55;margin-bottom:18px}
+.modal p b{color:var(--gold)}
+.join{
+  display:block;text-decoration:none;border-radius:16px;padding:14px;font:700 16px "Fredoka",sans-serif;color:#0b2a1c;
+  background:linear-gradient(90deg,#7dffb2,#7df9ff);box-shadow:0 10px 28px #7dffb255;transition:.15s;
+}
+.join:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.later{margin-top:12px;background:none;border:0;color:var(--muted);font:500 13px "Fredoka",sans-serif;cursor:pointer;text-decoration:underline}
+.x{
+  position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;
+  background:var(--glass);color:var(--text);font-size:16px;border:1px solid var(--glass-b);
+}
+.toast{
+  position:fixed;left:50%;bottom:78px;transform:translate(-50%,20px);opacity:0;z-index:30;pointer-events:none;
+  background:#000c;color:#fff;padding:10px 18px;border-radius:999px;font:600 14px "Fredoka",sans-serif;transition:.25s;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="moon"></div>
+
+<main class="wrap">
+  <header>
+    <span class="badge"><i>✦</i> Alight Motion Tools</span>
+    <h1>AM Preset Finder <span class="spark">✨</span></h1>
+    <p class="sub">Tempel link videonya, dapatkan presetnya. Tanpa API key, tinggal klik~</p>
+    <p class="owner">by Jiyyad Tools 💻</p>
+  </header>
+
+  <section class="card">
+    <label for="url">🔗 Link video (TikTok, dll)</label>
+    <div class="field">
+      <input id="url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://vt.tiktok.com/xxxxxxx/">
+      <button class="mini" id="paste" type="button">📋 Paste</button>
+      <button class="mini" id="clear" type="button">✖</button>
+    </div>
+    <button class="go" id="go" type="button">🌸 Cari Preset</button>
+    <p class="hint">Pastikan linknya publik dan lengkap ya.</p>
+
+    <div id="status">
+      <div class="loader" id="loader"><div class="dots"><span></span><span></span><span></span></div><p>Lagi nyari preset... sabar ya 🌙</p></div>
+      <div class="err" id="err"></div>
+    </div>
+
+    <div id="result">
+      <div class="res-head">
+        <h2>🎀 Hasil</h2>
+        <button class="mini" id="rawBtn" type="button">{ } JSON</button>
+      </div>
+      <div id="rows"></div>
+      <div class="raw" id="raw"><pre id="rawPre"></pre></div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div><b>①</b>Copy link video</div>
+    <div><b>②</b>Paste &amp; tekan cari</div>
+    <div><b>③</b>Ambil presetnya</div>
+  </section>
+
+  <footer>© <span id="yr"></span> <b>AM Preset Finder</b> · by Jiyyad Tools 💻</footer>
+</main>
+
+<button class="fab" id="fab" type="button">💬 Saluran Jiyyad</button>
+
+<div class="overlay" id="pop" role="dialog" aria-modal="true" aria-labelledby="popTitle">
+  <div class="modal">
+    <button class="x" id="popX" type="button" aria-label="Tutup">✕</button>
+    <div class="ico">💬</div>
+    <h3 id="popTitle">Saluran WhatsApp Jiyyad</h3>
+    <p>Jika mau web lainnya, masuk di <b>saluran Jiyyad 💻</b> ya! Banyak tools keren lainnya menunggu kamu~</p>
+    <a class="join" id="join" href="https://whatsapp.com/channel/0029VbDOUI04NVinhn4Lvw0r" target="_blank" rel="noopener noreferrer">🚀 Gabung Saluran</a>
+    <button class="later" id="popLater" type="button">Nanti saja</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  // ====== KONFIGURASI ======
+  var API_URL  = "https://api.zyvor.my.id/api/am/presetv2";
+  var FALLBACK = "/api/preset"; // dipakai kalau browser memblokir API langsung (CORS)
+
+  var $ = function(id){return document.getElementById(id)};
+  var urlIn=$("url"), goBtn=$("go"), loader=$("loader"), errBox=$("err"),
+      resBox=$("result"), rowsEl=$("rows"), rawEl=$("raw"), rawPre=$("rawPre"), toastEl=$("toast");
+
+  $("yr").textContent = new Date().getFullYear();
+
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add("on");
+    clearTimeout(toast.t); toast.t = setTimeout(function(){toastEl.classList.remove("on")}, 1800);
+  }
+  function copy(text){
+    function done(){toast("Tersalin ✨")}
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else fallback();
+    function fallback(){
+      var t=document.createElement("textarea"); t.value=text; t.style.position="fixed"; t.style.opacity="0";
+      document.body.appendChild(t); t.select();
+      try{document.execCommand("copy"); done();}catch(e){toast("Gagal menyalin")}
+      document.body.removeChild(t);
+    }
+  }
+
+  // ====== UI dasar ======
+  $("paste").onclick = function(){
+    if(navigator.clipboard && navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(t){urlIn.value=t.trim();urlIn.focus()}, function(){toast("Izin clipboard ditolak, paste manual ya")});
+    } else toast("Paste manual ya (tahan lalu Tempel)");
+  };
+  $("clear").onclick = function(){urlIn.value="";urlIn.focus();hideAll()};
+  urlIn.addEventListener("keydown", function(e){if(e.key==="Enter")run()});
+  goBtn.onclick = run;
+  $("rawBtn").onclick = function(){rawEl.classList.toggle("on")};
+
+  function hideAll(){
+    errBox.classList.remove("on"); resBox.classList.remove("on"); loader.classList.remove("on");
+  }
+  function showErr(html){errBox.innerHTML=html; errBox.classList.add("on")}
+
+  // ====== Panggil API ======
+  function post(endpoint, body){
+    return fetch(endpoint, {method:"POST", headers:{"Content-Type":"application/json"}, body:body});
+  }
+  async function callApi(link){
+    var body = JSON.stringify({url:link});
+    var res;
+    try{
+      res = await post(API_URL, body);
+    }catch(e){
+      // kemungkinan CORS / jaringan: coba proxy same-origin
+      try{ res = await post(FALLBACK, body); }
+      catch(e2){ var er=new Error("NETWORK"); er.cors=true; throw er; }
+      if(res.status===404){ var er2=new Error("NETWORK"); er2.cors=true; throw er2; }
+    }
+    var text = await res.text();
+    var data; try{ data = JSON.parse(text) }catch(e){ data = null }
+    if(!res.ok){
+      var msg = (data && (data.message||data.error||data.msg)) || ("HTTP "+res.status);
+      throw new Error(typeof msg==="string"?msg:JSON.stringify(msg));
+    }
+    return data===null ? {result:text} : data;
+  }
+
+  async function run(){
+    var link = urlIn.value.trim();
+    hideAll();
+    if(!/^https?:\/\/\S+$/i.test(link)){
+      showErr("⚠️ Masukkan link yang valid dulu ya (diawali <b>https://</b>).");
+      urlIn.focus(); return;
+    }
+    goBtn.disabled = true; goBtn.textContent = "⏳ Mencari...";
+    loader.classList.add("on");
+    try{
+      var data = await callApi(link);
+      loader.classList.remove("on");
+      render(data);
+    }catch(e){
+      loader.classList.remove("on");
+      if(e.cors){
+        showErr("😿 Browser tidak bisa menghubungi API (kemungkinan diblokir CORS atau jaringan). " +
+                "Kalau webnya kamu host di Vercel, pakai file <b>api/preset.js</b> bawaan sebagai proxy, lalu coba lagi.");
+      } else {
+        showErr("😿 Gagal: " + String(e.message||e).replace(/</g,"&lt;"));
+      }
+    }finally{
+      goBtn.disabled = false; goBtn.textContent = "🌸 Cari Preset";
+    }
+  }
+
+  // ====== Tampilkan hasil (fleksibel untuk format JSON apa pun) ======
+  var IMG = /\.(png|jpe?g|gif|webp|avif)(\?|#|$)/i, VID = /\.(mp4|webm|mov)(\?|#|$)/i;
+  function pretty(k){return String(k).replace(/[_\-.]+/g," ").replace(/([a-z])([A-Z])/g,"$1 $2")}
+  function flatten(obj, prefix, out){
+    if(obj===null || obj===undefined) return out;
+    if(Array.isArray(obj)){
+      obj.forEach(function(v,i){flatten(v, prefix ? prefix+" "+(i+1) : String(i+1), out)});
+    } else if(typeof obj==="object"){
+      Object.keys(obj).forEach(function(k){flatten(obj[k], prefix ? prefix+" › "+pretty(k) : pretty(k), out)});
+    } else {
+      out.push([prefix||"hasil", obj]);
+    }
+    return out;
+  }
+  function el(tag, cls, text){
+    var n=document.createElement(tag); if(cls) n.className=cls; if(text!==undefined) n.textContent=text; return n;
+  }
+  function render(data){
+    rowsEl.textContent = "";
+    rawPre.textContent = JSON.stringify(data, null, 2);
+    rawEl.classList.remove("on");
+
+    var pairs = flatten(data, "", []).filter(function(p){return String(p[1]).trim()!==""});
+    // sembunyikan flag teknis sederhana
+    pairs = pairs.filter(function(p){return !/^(success|status|ok|code)$/i.test(p[0]) || typeof p[1]!=="boolean"});
+
+    if(!pairs.length){
+      rowsEl.appendChild(el("div","row","Tidak ada data preset yang ditemukan untuk link ini."));
+    }
+    pairs.forEach(function(p){
+      var key=p[0], val=p[1], s=String(val);
+      var row=el("div","row"); row.appendChild(el("div","k",key));
+      var isUrl=/^https?:\/\/\S+$/i.test(s);
+      if(isUrl && IMG.test(s)){
+        var im=document.createElement("img"); im.src=s; im.alt=key; im.loading="lazy"; im.referrerPolicy="no-referrer";
+        row.appendChild(im);
+      } else if(isUrl && VID.test(s)){
+        var vd=document.createElement("video"); vd.src=s; vd.controls=true; vd.playsInline=true; vd.preload="metadata";
+        row.appendChild(vd);
+      } else {
+        row.appendChild(el("div","v",s));
+      }
+      var acts=el("div","acts");
+      var cb=el("button","mini","📋 Salin"); cb.type="button"; cb.onclick=function(){copy(s)}; acts.appendChild(cb);
+      if(isUrl){
+        var a=el("a","mini","🔗 Buka"); a.href=s; a.target="_blank"; a.rel="noopener noreferrer"; acts.appendChild(a);
+      }
+      row.appendChild(acts); rowsEl.appendChild(row);
+    });
+    resBox.classList.add("on");
+    resBox.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+
+  // ====== Popup saluran WhatsApp ======
+  var pop=$("pop");
+  function openPop(){pop.classList.add("on")}
+  function closePop(){
+    pop.classList.remove("on");
+    try{sessionStorage.setItem("jy_pop","1")}catch(e){}
+  }
+  $("popX").onclick=closePop; $("popLater").onclick=closePop;
+  $("join").addEventListener("click", function(){setTimeout(closePop, 300)});
+  pop.addEventListener("click", function(e){if(e.target===pop) closePop()});
+  document.addEventListener("keydown", function(e){if(e.key==="Escape") closePop()});
+  $("fab").onclick=openPop;
+  var seen=false; try{seen=sessionStorage.getItem("jy_pop")==="1"}catch(e){}
+  if(!seen) setTimeout(openPop, 1200);
+
+  // ====== Latar: kelopak sakura + bintang ======
+  var cv=$("sky"), cx=cv.getContext("2d"), W=0,H=0, items=[], stars=[];
+  function size(){W=cv.width=innerWidth; H=cv.height=innerHeight}
+  function mk(){
+    items=[]; stars=[];
+    var n = Math.min(36, Math.floor(W/32));
+    for(var i=0;i<n;i++) items.push({x:Math.random()*W,y:Math.random()*H,r:5+Math.random()*7,
+      s:.4+Math.random()*.9,d:Math.random()*Math.PI*2,sp:.01+Math.random()*.02,rot:Math.random()*6});
+    for(var j=0;j<60;j++) stars.push({x:Math.random()*W,y:Math.random()*H*.7,r:Math.random()*1.4+.3,p:Math.random()*6});
+  }
+  function petal(p){
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.rot);
+    var g=cx.createLinearGradient(-p.r,0,p.r,0); g.addColorStop(0,"#ffd1e8cc"); g.addColorStop(1,"#ff7eb6cc");
+    cx.fillStyle=g; cx.beginPath();
+    cx.moveTo(0,-p.r); cx.bezierCurveTo(p.r,-p.r*.6,p.r*.8,p.r*.8,0,p.r);
+    cx.bezierCurveTo(-p.r*.8,p.r*.8,-p.r,-p.r*.6,0,-p.r); cx.fill(); cx.restore();
+  }
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function frame(t){
+    cx.clearRect(0,0,W,H);
+    stars.forEach(function(s){
+      cx.globalAlpha = .35+.65*Math.abs(Math.sin(t/900+s.p));
+      cx.fillStyle="#fff"; cx.beginPath(); cx.arc(s.x,s.y,s.r,0,6.3); cx.fill();
+    });
+    cx.globalAlpha=1;
+    items.forEach(function(p){
+      petal(p);
+      if(!reduce){
+        p.y+=p.s; p.d+=p.sp; p.x+=Math.sin(p.d)*.7+.25; p.rot+=.01;
+        if(p.y>H+20){p.y=-20;p.x=Math.random()*W}
+        if(p.x>W+20) p.x=-20;
+      }
+    });
+    requestAnimationFrame(frame);
+  }
+  addEventListener("resize", function(){size();mk()});
+  size(); mk(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
